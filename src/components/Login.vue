@@ -6,12 +6,14 @@
         <h2>User Login</h2>
       </div>
  
-      <form action="#">
+      <form action="#" @submit.prevent="handleSubmit">
         <label class="block" style="display:table">Email</label>
-        <input type="email" placeholder="Enter your email" />
+        <input type="email" placeholder="Enter your email" 
+        v-model="fromData.email" ref="email"/>
 
-        <label class="block mt-3">Password</label>
-        <input type="password" placeholder="Enter password" />
+        <label class="block mt-3" style="display:table">Password</label>
+        <input type="password" placeholder="Enter password" 
+        v-model="fromData.passwoard" required ref="passwoard"/>
 
         <button type="submit" class="w-100 mt-3">Login</button>
 
@@ -33,7 +35,39 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data(){
+    return {
+          fromData:{
+              email:"",
+              passwoard:""
+          }
+    }
+  },
+  methods: {
+    handleSubmit(){
+      if(!this.fromData.email){
+        // alert('entry your email')
+        this.$eventBus.emit("toast",{
+          type:"Error",
+          message:"entry your email"
+        })
+        this.$refs.email.focus();
+        return
+      }
+      if(this.fromData.passwoard.length<4){
+        //alert('passwoard morethen 4 character or digit')
+        this.$eventBus.emit("toast", {
+          type:"Error",
+          message:"passwoard morethen 4 character or digit"
+        })
+        this.$refs.passwoard.focus();
+        return
+      }
+      console.log('...submit..sucess..')
+    }
+  },
+};
 </script>
 
 <style>
