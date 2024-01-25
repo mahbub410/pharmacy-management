@@ -5,15 +5,24 @@
         <img src="/img/lock.png" class="login-card__icon" alt="" />
         <h2>User Login</h2>
       </div>
- 
-      <form action="#" @submit.prevent="handleSubmit">
-        <label class="block" style="display:table">Email</label>
-        <input type="text" placeholder="Enter your username" 
-        v-model="fromData.username" ref="username"/>
 
-        <label class="block mt-3" style="display:table">Password</label>
-        <input type="password" placeholder="Enter password" 
-        v-model="fromData.passwoard" required ref="passwoard"/>
+      <form action="#" @submit.prevent="handleSubmit">
+        <label class="block" style="display: table">Email</label>
+        <input
+          type="text"
+          placeholder="Enter your username"
+          v-model="fromData.username"
+          ref="username"
+        />
+
+        <label class="block mt-3" style="display: table">Password</label>
+        <input
+          type="password"
+          placeholder="Enter password"
+          v-model="fromData.passwoard"
+          required
+          ref="passwoard"
+        />
 
         <p class="text-center mt-3" v-if="loggingIn">Logging in...</p>
         <button type="submit" class="w-100 mt-3" v-else>Login</button>
@@ -25,7 +34,7 @@
               Remember Me
             </label>
           </div>
-          
+
           <div>
             <a href="#">Forgot Password</a>
           </div>
@@ -38,64 +47,67 @@
 <script>
 import axios from "axios";
 export default {
-  data(){
+  data() {
     return {
-          fromData:{
-              username:"",
-              passwoard:""
-          },
-          loggingIn: false,
-          movedToRight: false,
-          showing: false
-    }
+      fromData: {
+        username: "",
+        passwoard: "",
+      },
+      loggingIn: false,
+      movedToRight: false,
+      showing: false,
+    };
   },
   methods: {
-    handleSubmit(){
-      if(!this.fromData.username){
+    handleSubmit() {
+      if (!this.fromData.username) {
         // alert('entry your username')
-        this.$eventBus.emit("toast",{
-          type:"Error",
-          message:"entry your username"
-        })
+        this.$eventBus.emit("toast", {
+          type: "Error",
+          message: "entry your username",
+        });
         this.$refs.username.focus();
-        return
+        return;
       }
-      if(this.fromData.passwoard.length<4){
+      if (this.fromData.passwoard.length < 4) {
         //alert('passwoard morethen 4 character or digit')
         this.$eventBus.emit("toast", {
-          type:"Error",
-          message:"passwoard morethen 4 character or digit"
-        })
+          type: "Error",
+          message: "passwoard morethen 4 character or digit",
+        });
         this.$refs.passwoard.focus();
-        return
+        return;
       }
       // console.log('...submit..sucess..')
       //  console.log(this.fromData);
       this.loggingIn = true;
-      axios.post("https://api.rimoned.com/api/pharmacy-management/v1/login",
-        this.fromData
-      )
-      .then((res)=>{
-        console.log(res.data);
-        this.$eventBus.emit("toast",{
-          type: "Success",
-          message: res.data.message
-        });
-      })
-      .catch((err)=>{
-          let errMessage ="Something Wrong.!"
-          if(err.response){
-            errMessage = err.response.data.message
+      axios
+        .post(
+          "https://api.rimoned.com/api/pharmacy-management/v1/login",
+          this.fromData
+        )
+        .then((res) => {
+          //console.log(res.data);
+          this.$eventBus.emit("toast", {
+            type: "Success",
+            message: res.data.message,
+          });
+        })
+        .catch((err) => {
+          let errMessage = "Something Wrong.!";
+          if (err.response) {
+            errMessage = err.response.data.message;
           }
-          this.$eventBus.emit("toast",{
+          this.$eventBus.emit("toast", {
             type: "Error",
-          message: errMessage
-          })
-      })
-      .finally(()=>{
-          this.loggingIn=false;
-      });
-    }
+            message: errMessage,
+          });
+        })
+        .finally(() => {
+          this.loggingIn = false;
+        });
+      console.log(this.fromData);
+    },
   },
 };
 </script>
