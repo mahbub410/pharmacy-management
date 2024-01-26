@@ -24,8 +24,13 @@
           ref="password"
         />
 
-        <p class="text-center mt-3" v-if="loggingIn">Logging in...</p>
-        <button type="submit" class="w-100 mt-3" v-else>Login</button>
+        <TheButton :block="true" :loading="loggingIn" class="mt-3">
+          Login
+
+        </TheButton>
+
+        <!-- <p class="text-center mt-3" v-if="loggingIn">Logging in...</p> -->
+        <!-- <button type="submit" class="w-100 mt-3" v-else>Login</button> -->
 
         <div class="d-flex jc-between mt-3">
           <div>
@@ -46,6 +51,7 @@
 
 <script>
 import axios from "axios";
+import TheButton from "../components/TheButton.vue";
 export default {
   data() {
     return {
@@ -57,6 +63,9 @@ export default {
       movedToRight: false,
       showing: false,
     };
+  },
+  components:{
+    TheButton
   },
   methods: {
     handleSubmit() {
@@ -92,6 +101,9 @@ export default {
             type: "Success",
             message: res.data.message,
           });
+          localStorage.setItem("accessToken",res.data.accessToken)
+          this.$router.push('/dashboard')
+
         })
         .catch((err) => {
           let errMessage = "Something Wrong.!";

@@ -1,5 +1,7 @@
 <template>
-  <Login></Login>
+  <!-- <Login></Login> -->
+  <router-view></router-view>
+
   <div class="toasts">
     <TheToast 
       v-for="(tost,i) in toasts" 
@@ -12,30 +14,27 @@
 </template>
 
 <script>
-import Login from './components/Login.vue';
 import TheToast from './components/TheToast.vue';
 export default {
   data(){
     return{
       toasts:[
-        // {
-        //   type:"Success",
-        //   message:"Done Successfully!"
-        // },
-        // {
-        //   type:"Error",
-        //   message:"Somthing wrong"
-        // }
+        /*{
+          type:"Success",
+          message:"Done Successfully!"
+        },
+        {
+          type:"Error",
+          message:"Somthing wrong"
+        }*/
       ]
     }
   },
   components:{
-    Login,
     TheToast
   },
   mounted(){
     this.$eventBus.on("toast",data=>{
-      // console.log(data);
       this.toasts.push(data);
       this.removeOneToast();
     })
