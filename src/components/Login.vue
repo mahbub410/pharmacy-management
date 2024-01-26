@@ -19,9 +19,9 @@
         <input
           type="password"
           placeholder="Enter password"
-          v-model="fromData.passwoard"
+          v-model="fromData.password"
           required
-          ref="passwoard"
+          ref="password"
         />
 
         <p class="text-center mt-3" v-if="loggingIn">Logging in...</p>
@@ -51,7 +51,7 @@ export default {
     return {
       fromData: {
         username: "",
-        passwoard: "",
+        password: "",
       },
       loggingIn: false,
       movedToRight: false,
@@ -69,13 +69,13 @@ export default {
         this.$refs.username.focus();
         return;
       }
-      if (this.fromData.passwoard.length < 4) {
+      if (this.fromData.password.length < 4) {
         //alert('passwoard morethen 4 character or digit')
         this.$eventBus.emit("toast", {
           type: "Error",
           message: "passwoard morethen 4 character or digit",
         });
-        this.$refs.passwoard.focus();
+        this.$refs.password.focus();
         return;
       }
       // console.log('...submit..sucess..')
