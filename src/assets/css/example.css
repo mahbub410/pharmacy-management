@@ -132,7 +132,7 @@ table tr:hover {
 }
 
 .block {
-  display: block;
+  display: flex;
 }
 
 .action-icon {

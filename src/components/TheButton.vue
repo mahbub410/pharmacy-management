@@ -1,5 +1,5 @@
 <template>
-    <div class="the-button" :class="{'the-button--block':block}">
+    <div class="the-button" :class="{'the-button--block':block,'the-button--gray':color==='gray'}">
         <button>
             <slot></slot>
 
@@ -22,6 +22,10 @@ export default {
         block:{
             type: Boolean,
             default: false
+        },
+        color:{
+          type: String,
+          default: "none"
         }
     }
 }
