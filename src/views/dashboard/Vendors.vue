@@ -16,26 +16,32 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(vData,i) in vendors" :key="vData.name">
-        <td>{{ i+1}}</td>
-        <td>{{vData.name}}</td>
-        <td>{{vData.description}}</td>
+      <tr v-for="(vData, i) in vendors" :key="vData.name">
+        <td>{{ i + 1 }}</td>
+        <td>{{ vData.name }}</td>
+        <td>{{ vData.description }}</td>
         <td>
-          <img src="/img/edit.png" alt="" class="action-icon" 
-          @click="selectedVendor = vData; editModal = true;" 
+          <img
+            src="/img/edit.png"
+            alt=""
+            class="action-icon"
+            @click="editBtnHandler(vData)"
           />
           <img
             src="/img/trash.png"
             alt=""
             class="action-icon action-icon--delete ml-3"
-            @click="selectedVendor = vData; deleteModal = true;" 
+            @click="
+              selectedVendor = vData;
+              deleteModal = true;
+            "
           />
         </td>
       </tr>
     </tbody>
   </table>
 
-    <!-- Add Modal -->
+  <!-- Add Modal -->
   <TheModal v-model="addModal" heading="Add New Vendor">
     <form @submit.prevent="addNew">
       <label class="block">Vendore Name</label>
@@ -60,8 +66,8 @@
     </form>
   </TheModal>
 
-     <!-- Edit Modal -->
-     <TheModal v-model="editModal" heading="Update Vendor">
+  <!-- Edit Modal -->
+  <TheModal v-model="editModal" heading="Update Vendor">
     <form @submit.prevent="editVendor">
       <label class="block">Vendore Name</label>
       <input
@@ -84,24 +90,29 @@
       <TheButton class="w-100 mt-3" :loading="editing">Update</TheButton>
     </form>
   </TheModal>
-  
+
   <!-- Delete Modal -->
   <TheModal v-model="deleteModal" heading="Are You Soure?">
     <p>
-        Are you went to delete
-        <strong>{{ selectedVendor.name }}</strong>
+      Are you went to delete
+      <strong>{{ selectedVendor.name }}</strong>
     </p>
-    
-    <TheButton class="mt-4" :loading="deleteing" @click="deleteVendor">Yes</TheButton>
-    <TheButton class="ml-4" color="gray" @click="this.deleteModal=false">No</TheButton>
-  </TheModal>
 
+    <TheButton class="mt-4" :loading="deleteing" @click="deleteVendor"
+      >Yes</TheButton
+    >
+    <TheButton class="ml-4" color="gray" @click="this.deleteModal = false"
+      >No</TheButton
+    >
+  </TheModal>
 </template>
 
 <script>
 import axios from "axios";
-import TheButton from "../../components/TheButton.vue";
+import  TheButton from "../../components/TheButton.vue"
 import TheModal from "../../components/TheModal.vue";
+import {showErrorMsg,showSuccessMsg} from "../../utils/function";
+
 export default {
   data() {
     return {
@@ -117,7 +128,8 @@ export default {
       deleteing: false,
       getingVendors: false,
       vendors: [],
-      selectedVendor:{}
+      selectedVendor: {}
+      //updateVendor: {}
     };
   },
 
@@ -133,8 +145,8 @@ export default {
       this.newVendor = { name: "", description: "" };
     },
     getAllVendors() {
-        this.getingVendors = true;
-        axios
+      this.getingVendors = true;
+      axios
         .get(
           "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor",
           {
@@ -145,20 +157,12 @@ export default {
         )
         .then((res) => {
           this.vendors = res.data;
-          console.log(this.vendors)
         })
         .catch((err) => {
-          let errMessage = "Something Wrong.!";
-          if (err.response) {
-            errMessage = err.response.data.message;
-          }
-          this.$eventBus.emit("toast", {
-            type: "Error",
-            message: errMessage,
-          });
+          showErrorMsg(err);
         })
         .finally(() => {
-            this.getingVendors = false;
+          this.getingVendors = false;
         });
     },
     addNew() {
@@ -176,34 +180,24 @@ export default {
         )
         .then((res) => {
           //console.log(res.data);
-          this.$eventBus.emit("toast", {
-            type: "Success",
-            message: res.data.message,
-          });
+          showSuccessMsg(res);
           this.addModal = false;
           this.resetForm();
           this.getAllVendors();
         })
         .catch((err) => {
-          let errMessage = "Something Wrong.!";
-          if (err.response) {
-            errMessage = err.response.data.message;
-          }
-          this.$eventBus.emit("toast", {
-            type: "Error",
-            message: errMessage,
-          });
+          showErrorMsg(err);
         })
         .finally(() => {
           this.adding = false;
         });
     },
-    deleteVendor(){
-        this.deleteing = true;
+    deleteVendor() {
+      this.deleteing = true;
       axios
         .delete(
-          "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/"+
-          this.selectedVendor._id,
+          "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/" +
+            this.selectedVendor._id,
           {
             headers: {
               authorization: localStorage.getItem("accessToken"),
@@ -211,36 +205,24 @@ export default {
           }
         )
         .then((res) => {
-          //console.log(res.data);
-          this.$eventBus.emit("toast", {
-            type: "Success",
-            message: res.data.message,
-          });
-          //   localStorage.setItem("accessToken",res.data.accessToken)
-          //   this.$router.push('/dashboard')
+          showSuccessMsg(res);
           this.deleteModal = false;
           this.getAllVendors();
         })
         .catch((err) => {
-          let errMessage = "Something Wrong.!";
-          if (err.response) {
-            errMessage = err.response.data.message;
-          }
-          this.$eventBus.emit("toast", {
-            type: "Error",
-            message: errMessage,
-          });
+          showErrorMsg(err);
         })
         .finally(() => {
           this.deleteing = false;
         });
     },
-    editVendor(){
-        this.editing = true;
+    editVendor() {
+      this.editing = true;
+      //console.log(this.selectedVendor)
       axios
         .put(
-          "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/"+
-          this.selectedVendor._id,
+          "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/" +
+            this.selectedVendor._id,
           this.selectedVendor,
           {
             headers: {
@@ -249,26 +231,22 @@ export default {
           }
         )
         .then((res) => {
-          //console.log(res.data);
-          this.$eventBus.emit("toast", {
-            type: "Success",
-            message: res.data.message,
-          });
+          showSuccessMsg(res);
           this.editModal = false;
+          this.getAllVendors();
         })
         .catch((err) => {
-          let errMessage = "Something Wrong.!";
-          if (err.response) {
-            errMessage = err.response.data.message;
-          }
-          this.$eventBus.emit("toast", {
-            type: "Error",
-            message: errMessage,
-          });
+          showErrorMsg(err);
         })
         .finally(() => {
           this.editing = false;
         });
+    },
+    editBtnHandler(vData){
+      this.editModal = true;
+      this.selectedVendor.description = vData.description;
+      this.selectedVendor.name = vData.name;
+      this.selectedVendor._id = vData._id;
     }
   },
 };

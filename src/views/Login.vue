@@ -52,6 +52,8 @@
 <script>
 import axios from "axios";
 import TheButton from "../components/TheButton.vue";
+import {showErrorMsg,showSuccessMsg} from "../utils/function"
+
 export default {
   data() {
     return {
@@ -70,20 +72,12 @@ export default {
   methods: {
     handleSubmit() {
       if (!this.fromData.username) {
-        // alert('entry your username')
-        this.$eventBus.emit("toast", {
-          type: "Error",
-          message: "entry your username",
-        });
+        showErrMsg("entry your username");
         this.$refs.username.focus();
         return;
       }
-      if (this.fromData.password.length < 4) {
-        //alert('passwoard morethen 4 character or digit')
-        this.$eventBus.emit("toast", {
-          type: "Error",
-          message: "passwoard morethen 4 character or digit",
-        });
+      if (this.fromData.password.length < 6) {
+        showErrMsg("passwoard morethen 6 character or digit");
         this.$refs.password.focus();
         return;
       }
@@ -96,24 +90,13 @@ export default {
           this.fromData
         )
         .then((res) => {
-          //console.log(res.data);
-          this.$eventBus.emit("toast", {
-            type: "Success",
-            message: res.data.message,
-          });
+          showSuccessMsg(res);
           localStorage.setItem("accessToken",res.data.accessToken)
           this.$router.push('/dashboard')
 
         })
         .catch((err) => {
-          let errMessage = "Something Wrong.!";
-          if (err.response) {
-            errMessage = err.response.data.message;
-          }
-          this.$eventBus.emit("toast", {
-            type: "Error",
-            message: errMessage,
-          });
+          showErrMsg(err);
         })
         .finally(() => {
           this.loggingIn = false;

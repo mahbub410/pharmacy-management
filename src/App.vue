@@ -15,6 +15,8 @@
 
 <script>
 import TheToast from './components/TheToast.vue';
+import {eventBus} from './utils/eventBus';
+
 export default {
   data(){
     return{
@@ -34,7 +36,7 @@ export default {
     TheToast
   },
   mounted(){
-    this.$eventBus.on("toast",data=>{
+    eventBus.on("toast",data=>{
       this.toasts.push(data);
       this.removeOneToast();
     })
