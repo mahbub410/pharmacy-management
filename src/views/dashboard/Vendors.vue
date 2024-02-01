@@ -108,10 +108,11 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 import  TheButton from "../../components/TheButton.vue"
 import TheModal from "../../components/TheModal.vue";
 import {showErrorMsg,showSuccessMsg} from "../../utils/function";
+import privateService from "../../service/privateService"; 
 
 export default {
   data() {
@@ -138,7 +139,8 @@ export default {
     TheModal,
   },
   mounted() {
-    this.getAllVendors();
+    setTimeout(this.getAllVendors,100);
+    //this.getAllVendors();
   },
   methods: {
     resetForm() {
@@ -146,7 +148,7 @@ export default {
     },
     getAllVendors() {
       this.getingVendors = true;
-      axios
+      /*axios
         .get(
           "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor",
           {
@@ -154,7 +156,8 @@ export default {
               authorization: localStorage.getItem("accessToken"),
             },
           }
-        )
+        )*/
+      privateService.getVendors()
         .then((res) => {
           this.vendors = res.data;
         })
@@ -168,16 +171,7 @@ export default {
     addNew() {
       // console.log(this.newVendor);
       this.adding = true;
-      axios
-        .post(
-          "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor",
-          this.newVendor,
-          {
-            headers: {
-              authorization: localStorage.getItem("accessToken"),
-            },
-          }
-        )
+        privateService.addVendor(this.newVendor)
         .then((res) => {
           //console.log(res.data);
           showSuccessMsg(res);
@@ -194,16 +188,7 @@ export default {
     },
     deleteVendor() {
       this.deleteing = true;
-      axios
-        .delete(
-          "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/" +
-            this.selectedVendor._id,
-          {
-            headers: {
-              authorization: localStorage.getItem("accessToken"),
-            },
-          }
-        )
+        privateService.deleteVendor(this.selectedVendor._id)
         .then((res) => {
           showSuccessMsg(res);
           this.deleteModal = false;
@@ -218,18 +203,7 @@ export default {
     },
     editVendor() {
       this.editing = true;
-      //console.log(this.selectedVendor)
-      axios
-        .put(
-          "https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/" +
-            this.selectedVendor._id,
-          this.selectedVendor,
-          {
-            headers: {
-              authorization: localStorage.getItem("accessToken"),
-            },
-          }
-        )
+        privateService.updateVendors(this.selectedVendor)
         .then((res) => {
           showSuccessMsg(res);
           this.editModal = false;

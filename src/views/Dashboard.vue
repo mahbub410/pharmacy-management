@@ -18,12 +18,24 @@
 <script>
 import TheSidebar from '../components/TheSidebar.vue'
 import TheHeader from '../components/TheHeader.vue';
+import {setPrivateHeader} from '../service/axiosInstance';
 
 export default {
     components:{
         TheSidebar,
         TheHeader
+    },
+    mounted(){
+      setPrivateHeader();
+      console.log("mounted")
+    },
+    created(){
+      const accessToken = localStorage.getItem("accessToken");
+      if(!accessToken){
+        location.href="/"
+      }
     }
+
 }
 </script>
 
