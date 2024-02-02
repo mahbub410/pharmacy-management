@@ -27,7 +27,7 @@ export default {
     },
     mounted(){
       setPrivateHeader();
-      console.log("mounted")
+      //console.log("mounted")
     },
     created(){
       const accessToken = localStorage.getItem("accessToken");

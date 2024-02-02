@@ -1,8 +1,30 @@
 
 <template>
   <div class="the-header">
-    <div>
-      <input type="text" class="the-header__search" placeholder="Search.." />
+    <div class="p-relative ml-7">
+      <input
+        type="text"
+        class="the-header__search"
+        placeholder="Search.."
+        @focus="searchFocus = true"
+        @blur="handleBlur"
+        v-model="searchString"
+      />
+
+      <div class="search-results" v-show="searchFocus">
+        <table>
+          <tr 
+            class="result-item"
+            v-for="drug in drugs" :key="drug.name"
+            @click="handleClick(drug)"
+          >
+             <td>{{ drug.name }}</td>
+             <td>{{ drug.weight }}</td>
+             <td>{{ drug.vendore }}</td>
+             <td>{{ drug.quantity }}</td>
+          </tr>
+        </table>
+      </div>
     </div>
     <div class="avatar-wrapper">
       <div class="avatar" @click="showAvatar = !showAvatar">T</div>
@@ -10,35 +32,142 @@
         <div class="avatar__overflow-title">
           test@gmail.com
           <router-link to="/dashboard/settings/account">
-            <div class="avatar__overflow-link mt-2"
-                @click="showAvatar=false; $router.push('/dashboard/settings')"
+            <div
+              class="avatar__overflow-link mt-2"
+              @click="
+                showAvatar = false;
+                $router.push('/dashboard/settings');
+              "
             >
-            Setting
+              Setting
             </div>
           </router-link>
           <router-link to="#" @click="logout">
-            <div class="avatar__overflow-link mb-2"
-            >
-            Logout
-            </div>
+            <div class="avatar__overflow-link mb-2">Logout</div>
           </router-link>
         </div>
       </div>
     </div>
   </div>
+  <TheModal v-model="detailsModal" heading="Drug Details">
+    <div>
+      <table class="drug-details">
+        <tr>
+          <th>Name:</th>
+          <td>{{ selectedDrug.name }}</td>
+        </tr>
+        <tr>
+          <th>Type:</th>
+          <td>{{ selectedDrug.type }}</td>
+        </tr>
+        <tr>
+          <th>Weight:</th>
+          <td>{{ selectedDrug.weight }}</td>
+        </tr>
+        <tr>
+          <th>Vendor:</th>
+          <td>{{ selectedDrug.vendor }}</td>
+        </tr>
+        <tr>
+          <th>Price:</th>
+          <td>{{ selectedDrug.price }}</td>
+        </tr>
+        <tr>
+          <th>Available:</th>
+          <td>{{ selectedDrug.quantity }}</td>
+        </tr>
+        <tr>
+          <th>Quantity:</th>
+          <td><input type="number" v-model="quantity" ref="qtyInput"></td>
+        </tr>
+      </table>
+      <TheButton @click="addToCart" class="w-100 mt-4">Add to Cart</TheButton>
+    </div>
+  </TheModal>
 </template>
 
 <script>
+import privateService from '../service/privateService';
+import TheModal from './TheModal.vue';
+import TheButton from './TheButton.vue';
+import { showErrorMsg } from '../utils/function';
+
 export default {
   data() {
     return {
       showAvatar: false,
+      searchString: "",
+      drugs: [],
+      searchFocus: false,
+      lastSearchtime: 0,
+      detailsModal: false,
+      selectedDrug: {},
+      quantity: ""
     };
   },
-  methods:{
-    logout(){
+  components:{
+    TheModal,
+    TheButton
+  },
+  methods: {
+    logout() {
       localStorage.removeItem("accessToken");
-      location.href="/"
+      location.href = "/";
+    },
+    searchDrug(searchString,lastSearchtime){
+      privateService
+      .searchDrug(searchString)
+      .then((res)=>{
+        if(lastSearchtime === this.lastSearchtime){
+          this.drugs = res.data;
+          console.log("update")
+        }
+      })
+      .catch((e)=>{
+        console.log(e);
+      })
+      
+    },
+    handleClick(drug){
+      this.selectedDrug = drug;
+      this.detailsModal = true;
+      console.log("click handle..");
+    },
+    handleBlur(){
+      setTimeout(()=>{
+        this.searchFocus = false;
+      },1000)
+      console.log("blur handle...")
+    },
+    addToCart(){
+      // console.log(this.selectedDrug)
+      console.log(this.quantity)
+      if(!this.quantity){
+        showErrorMsg("Please enter quqntity");
+        this.$refs.qtyInput.focus();
+      }
+      else{
+        if(this.quantity>this.selectedDrug.quantity){
+            showErrorMsg("Note enough available quqntity.!!")
+            this.$refs.qtyInput.focus();
+        }else{
+          console.log("item add to card")
+        }
+        
+      }
+      //TODO
+    }
+  },
+  watch:{
+    searchString(newValue){
+      if(newValue){
+        this.lastSearchtime = Date.now()
+        this.searchDrug(newValue,this.lastSearchtime)
+        //console.log(newValue)
+      }else{
+        this.drugs=[]
+      }
+      
     }
   }
 };
