@@ -1,6 +1,8 @@
 <template>
   <div class="login-page">
     <div class="login-card">
+      <h2>{{ projectName }}</h2>
+      {{ isLoggedIn }}
       <div class="text-center">
         <img src="/img/lock.png" class="login-card__icon" alt="" />
         <h2>User Login</h2>
@@ -26,7 +28,6 @@
 
         <TheButton :block="true" :loading="loggingIn" class="mt-3">
           Login
-
         </TheButton>
 
         <!-- <p class="text-center mt-3" v-if="loggingIn">Logging in...</p> -->
@@ -52,8 +53,11 @@
 <script>
 import axios from "axios";
 import TheButton from "../components/TheButton.vue";
-import {showErrorMsg,showSuccessMsg} from "../utils/function"
-import {setPrivateHeader} from "../service/axiosInstance"
+import { showErrorMsg, showSuccessMsg } from "../utils/function";
+import { setPrivateHeader } from "../service/axiosInstance";
+import { infoStore } from "../data/info";
+import { mapState, mapActions } from "pinia";
+import { useAuthStore } from "../store/authStore";
 
 export default {
   data() {
@@ -65,12 +69,24 @@ export default {
       loggingIn: false,
       movedToRight: false,
       showing: false,
+      projectName: infoStore.projectName,
     };
   },
-  components:{
-    TheButton
+  computed: {
+    ...mapState(useAuthStore, {
+      username: "username",
+      accessToken: "accessToken",
+      refreshToken: "refreshToken",
+      isLoggedIn: "isLoggedIn",
+    }),
+  },
+  components: {
+    TheButton,
   },
   methods: {
+    ...mapActions(useAuthStore, {
+      login: "login",
+    }),
     handleSubmit() {
       if (!this.fromData.username) {
         showErrMsg("entry your username");
@@ -92,10 +108,11 @@ export default {
         )
         .then((res) => {
           showSuccessMsg(res);
-          localStorage.setItem("accessToken",res.data.accessToken)
-          setPrivateHeader()
-          this.$router.push('/dashboard')
-
+          this.login(res.data);
+          console.log(res.data);
+          localStorage.setItem("accessToken", res.data.accessToken);
+          setPrivateHeader();
+          this.$router.push("/dashboard");
         })
         .catch((err) => {
           showErrMsg(err);

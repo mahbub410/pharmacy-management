@@ -16,6 +16,7 @@ export const setPrivateHeader = ()=>{
     axiosPrivate.defaults.headers.common["authorization"] = localStorage.getItem("accessToken");
 }
 
+// export const accessTokenChk =  localStorage.removeItem("accessToken");
 
 axiosPrivate.interceptors.response.use(
     function(response){
@@ -25,10 +26,11 @@ axiosPrivate.interceptors.response.use(
         if(error.response && error.response.status == 401){
             localStorage.removeItem("accessToken");
             location.href="/"
+            console.log("...con1...")
         }
         return Promise.reject(error)
+       // console.log("...con2..."+error)
     }
      
 )
 
-export const accessTokenChk =  localStorage.removeItem("accessToken");

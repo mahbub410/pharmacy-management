@@ -140,7 +140,6 @@ export default {
   },
   mounted() {
     setTimeout(this.getAllVendors,100);
-    //this.getAllVendors();
   },
   methods: {
     resetForm() {

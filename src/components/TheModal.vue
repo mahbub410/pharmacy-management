@@ -30,13 +30,13 @@ export default {
     modelValue: {
       type: Boolean,
       default: false,
-    },
+    }
   },
   methods: {
     closModal() {
       this.$emit("update:modelValue", false);
-    },
-  },
+    }
+  }
 };
 </script>
 

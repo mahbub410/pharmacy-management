@@ -1,40 +1,36 @@
 <template>
-    <div class="sidebar">
-        <div class="sidebar__top">
-            <h5 class="brand">Pharmacy Management</h5>
-            </div>
-        <div class="sidebar__bottom">
-            <div class="sidebar__nav pt-5">
-                <router-link to="/dashboard/overview">Overview</router-link>
-                <router-link to="/dashboard/drug">Drug</router-link>
-                <router-link to="/dashboard/vendor">Vendors</router-link>
-                <router-link to="/dashboard/selling-history">Selling History</router-link>
-                <router-link to="/dashboard/settings">Settings</router-link>
-            </div>
-        </div>
+  <div class="sidebar">
+    <div class="sidebar__top">
+      <h5 class="brand">Pharmacy Management</h5>
     </div>
+    <div class="sidebar__bottom">
+      <div class="sidebar__nav pt-5">
+        <router-link to="/dashboard/overview">Overview</router-link>
+        <router-link to="/dashboard/drug">Drug</router-link>
+        <router-link to="/dashboard/vendor">Vendors</router-link>
+        <router-link to="/dashboard/selling-history"
+          >Selling History</router-link
+        >
+        <router-link to="/dashboard/settings">Settings</router-link>
+
+        {{ projectName }}<br />
+        VisitCount: {{ visitCount }}
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { accessTokenChk } from "../service/axiosInstance";
+import { infoStore } from "../data/info";
 
 export default {
-    methods:{
-      // vendor(){
-      //   const accessToken = localStorage.getItem("accessToken");
-      // if(!accessToken){
-      //   location.href="/"
-      // }
-      // let act =accessTokenChk;
-      // if(act==0){
-
-      // }
-      // console.log("...vnd..")
-      // console.log(accessToken)
-      // console.log(accessTokenChk)
-      // }
-    }
-}
+  data() {
+    return {
+      projectName: infoStore.projectName,
+      visitCount: infoStore.visitCount,
+    };
+  },
+};
 </script>
 
 <style>

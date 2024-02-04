@@ -36,7 +36,7 @@
               class="avatar__overflow-link mt-2"
               @click="
                 showAvatar = false;
-                $router.push('/dashboard/settings');
+                $router.push('/dashboard/settings'); 
               "
             >
               Setting
@@ -87,9 +87,9 @@
 </template>
 
 <script>
-import privateService from '../service/privateService';
-import TheModal from './TheModal.vue';
-import TheButton from './TheButton.vue';
+import privateService from '../service/privateService'
+import TheModal from "./TheModal.vue"
+import TheButton from "./TheButton.vue"
 import { showErrorMsg } from '../utils/function';
 
 export default {

@@ -1,42 +1,62 @@
 <template>
-    <div class="dashboard">
-        <div class="dashboard__left">
-            <TheSidebar></TheSidebar>
-        </div>
-        <div class="dashboard__right">
-            <div class="dashboard__top">
-                <TheHeader></TheHeader>
-            </div>
-            <div class="dashboard__main">
-                <RouterView></RouterView>
-            </div>
-        </div>
-
+  <div class="dashboard">
+    <div class="dashboard__left">
+      <TheSidebar></TheSidebar>
     </div>
+
+    <div class="dashboard__right">
+      <div class="dashboard__top">
+        <TheHeader></TheHeader>
+      </div>
+      <div class="dashboard__main">
+        <RouterView></RouterView>
+      </div>
+    </div>
+
+    <div
+      class="dashboard__cart" 
+      :class="{ 'dashboard__cart--opened': cartOpened }"
+    >
+      <div class="the-cart-container">
+        <TheCart @close="cartOpened"></TheCart>
+      </div>
+      <div class="cart-arrow" @click="cartOpened = !cartOpened">
+        <img src="/img/arrow.png" alt="" />
+      </div>
+    </div>
+
+  </div>
 </template>
 
 <script>
-import TheSidebar from '../components/TheSidebar.vue'
-import TheHeader from '../components/TheHeader.vue';
-import {setPrivateHeader} from '../service/axiosInstance';
+import TheSidebar from "../components/TheSidebar.vue";
+import TheHeader from "../components/TheHeader.vue";
+import TheCart from "../components/TheCart.vue";
+import { setPrivateHeader } from "../service/axiosInstance";
 
 export default {
-    components:{
-        TheSidebar,
-        TheHeader
-    },
-    mounted(){
-      setPrivateHeader();
-      //console.log("mounted")
-    },
-    created(){
-      const accessToken = localStorage.getItem("accessToken");
-      if(!accessToken){
-        location.href="/"
-      }
+  data(){
+    return{
+      cartOpened: false
+      
     }
-
-}
+  },
+  components: {
+    TheSidebar,
+    TheHeader,
+    TheCart,
+  },
+  mounted() {
+    setPrivateHeader();
+    //console.log("mounted")
+  },
+  created() {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      location.href = "/";
+    }
+  },
+};
 </script>
 
 <style>

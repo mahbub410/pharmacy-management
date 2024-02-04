@@ -322,7 +322,6 @@ export default {
     },
 
     getAllvendors() {
-      //this.getingDrugs = true;
       privateService
         .getVendors()
         .then((res) => {
@@ -332,17 +331,14 @@ export default {
           showErrorMsg(err);
         })
         .finally(() => {
-          //this.getingDrugs = false;
         });
     },
 
     addNew() {
-      // console.log(this.newDrug);
       this.adding = true;
       privateService
         .addDrug(this.newDrug)
         .then((res) => {
-          //console.log(res.data);
           showSuccessMsg(res);
           this.addModal = false;
           this.resetForm();
@@ -400,7 +396,7 @@ export default {
       this.selectedDrug.quantity = vData.quantity;
       this.selectedDrug._id = vData._id;
       console.log(vData);
-    },
+    }
   },
 };
 </script>
