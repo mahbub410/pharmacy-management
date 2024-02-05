@@ -13,15 +13,16 @@
 
       <div class="search-results" v-show="searchFocus">
         <table>
-          <tr 
+          <tr
             class="result-item"
-            v-for="drug in drugs" :key="drug.name"
+            v-for="drug in drugs"
+            :key="drug.name"
             @click="handleClick(drug)"
           >
-             <td>{{ drug.name }}</td>
-             <td>{{ drug.weight }}</td>
-             <td>{{ drug.vendore }}</td>
-             <td>{{ drug.quantity }}</td>
+            <td>{{ drug.name }}</td>
+            <td>{{ drug.weight }}</td>
+            <td>{{ drug.vendore }}</td>
+            <td>{{ drug.quantity }}</td>
           </tr>
         </table>
       </div>
@@ -36,7 +37,7 @@
               class="avatar__overflow-link mt-2"
               @click="
                 showAvatar = false;
-                $router.push('/dashboard/settings'); 
+                $router.push('/dashboard/settings');
               "
             >
               Setting
@@ -78,7 +79,7 @@
         </tr>
         <tr>
           <th>Quantity:</th>
-          <td><input type="number" v-model="quantity" ref="qtyInput"></td>
+          <td><input type="number" v-model="quantity" ref="qtyInput" /></td>
         </tr>
       </table>
       <TheButton @click="addToCart" class="w-100 mt-4">Add to Cart</TheButton>
@@ -87,10 +88,12 @@
 </template>
 
 <script>
-import privateService from '../service/privateService'
-import TheModal from "./TheModal.vue"
-import TheButton from "./TheButton.vue"
-import { showErrorMsg } from '../utils/function';
+import privateService from "../service/privateService";
+import TheModal from "./TheModal.vue";
+import TheButton from "./TheButton.vue";
+import { showErrorMsg } from "../utils/function";
+import { mapActions } from "pinia";
+import { useCartStore } from "../store/cartStore";
 
 export default {
   data() {
@@ -102,74 +105,78 @@ export default {
       lastSearchtime: 0,
       detailsModal: false,
       selectedDrug: {},
-      quantity: ""
+      quantity: "",
     };
   },
-  components:{
+  components: {
     TheModal,
-    TheButton
+    TheButton,
   },
   methods: {
+    ...mapActions(useCartStore, {
+      addCartStore: "addCart",
+    }),
     logout() {
       localStorage.removeItem("accessToken");
       location.href = "/";
     },
-    searchDrug(searchString,lastSearchtime){
+    searchDrug(searchString, lastSearchtime) {
       privateService
-      .searchDrug(searchString)
-      .then((res)=>{
-        if(lastSearchtime === this.lastSearchtime){
-          this.drugs = res.data;
-          console.log("update")
-        }
-      })
-      .catch((e)=>{
-        console.log(e);
-      })
-      
+        .searchDrug(searchString)
+        .then((res) => {
+          if (lastSearchtime === this.lastSearchtime) {
+            this.drugs = res.data;
+            console.log("update");
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
-    handleClick(drug){
+    handleClick(drug) {
       this.selectedDrug = drug;
       this.detailsModal = true;
-      console.log("click handle..");
+      //console.log("click handle..");
     },
-    handleBlur(){
-      setTimeout(()=>{
+    handleBlur() {
+      setTimeout(() => {
         this.searchFocus = false;
-      },1000)
-      console.log("blur handle...")
+      }, 1000);
+      // console.log("blur handle...")
     },
-    addToCart(){
+    addToCart() {
       // console.log(this.selectedDrug)
-      console.log(this.quantity)
-      if(!this.quantity){
+      //console.log(this.quantity);
+      if (!this.quantity) {
         showErrorMsg("Please enter quqntity");
         this.$refs.qtyInput.focus();
-      }
-      else{
-        if(this.quantity>this.selectedDrug.quantity){
-            showErrorMsg("Note enough available quqntity.!!")
-            this.$refs.qtyInput.focus();
-        }else{
-          console.log("item add to card")
+      } else {
+        if (this.quantity > this.selectedDrug.quantity) {
+          showErrorMsg("Note enough available quqntity.!!");
+          this.$refs.qtyInput.focus();
+        } else {
+          console.log("item add to card");
+          this.addCartStore({ ...this.selectedDrug, quantity: this.quantity });
+          this.detailsModal = false;
+          this.quantity = 1;
+          this.searchString = "";
+          //console.log(this.addCartStore(this.selectedDrug));
         }
-        
       }
       //TODO
-    }
+    },
   },
-  watch:{
-    searchString(newValue){
-      if(newValue){
-        this.lastSearchtime = Date.now()
-        this.searchDrug(newValue,this.lastSearchtime)
+  watch: {
+    searchString(newValue) {
+      if (newValue) {
+        this.lastSearchtime = Date.now();
+        this.searchDrug(newValue, this.lastSearchtime);
         //console.log(newValue)
-      }else{
-        this.drugs=[]
+      } else {
+        this.drugs = [];
       }
-      
-    }
-  }
+    },
+  },
 };
 </script>
 

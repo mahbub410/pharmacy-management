@@ -21,6 +21,7 @@ export default {
   computed: {
     ...mapState(useAuthStore, {
       username: "username",
+      accessToken: "accessToken",
     }),
   },
   methods: {

@@ -109,7 +109,7 @@ export default {
         .then((res) => {
           showSuccessMsg(res);
           this.login(res.data);
-          console.log(res.data);
+          //console.log(res.data);
           localStorage.setItem("accessToken", res.data.accessToken);
           setPrivateHeader();
           this.$router.push("/dashboard");

@@ -12,9 +12,6 @@
           >Selling History</router-link
         >
         <router-link to="/dashboard/settings">Settings</router-link>
-
-        {{ projectName }}<br />
-        VisitCount: {{ visitCount }}
       </div>
     </div>
   </div>
