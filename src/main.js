@@ -23,7 +23,7 @@ watch(
     () => pinia.state.value.cart,
     (state) => {
         localStorage.setItem("products", JSON.stringify(state.products));
-        console.log(state.products)
+        //console.log(state.products)
     },
     {deep: true}
 );

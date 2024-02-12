@@ -29,6 +29,9 @@ export const useCartStore = defineStore("cart", {
         },
         removeCart(id) {
             delete this.products[id]
+        },
+        clearCart() {
+            this.products = {}
         }
     }
 });

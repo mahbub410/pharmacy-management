@@ -40,7 +40,34 @@
         </td>
       </tr>
     </table>
-    <TheButton class="w-100 mt-4"> Checkout</TheButton>
+    <TheButton
+      class="w-100 mt-4"
+      v-if="!showingCustomerInfo"
+      @click="showingCustomerInfo = true"
+    >
+      Checkout</TheButton
+    >
+    <!-- customer info -->
+    <div class="mt-4" v-if="showingCustomerInfo">
+      <label for="" class="block">Customer Name</label>
+      <input
+        type="text"
+        placeholder="Enter customer name"
+        class="w-100"
+        v-model="customer"
+      />
+      <label for="" class="block mt-4">Customer Phone</label>
+      <input
+        type="text"
+        placeholder="Enter customer phone"
+        class="w-100"
+        v-model="phone"
+      />
+      <TheButton class="w-100 mt-4" @click="confirmNow" :loading="confirming"
+        >Confirm</TheButton
+      >
+    </div>
+    <!-- customer info -->
   </div>
 </template>
 
@@ -48,8 +75,18 @@
 import TheButton from "./TheButton.vue";
 import { mapState, mapActions } from "pinia";
 import { useCartStore } from "../store/cartStore";
+import privateService from "../service/privateService";
+import { showErrorMsg, showSuccessMsg } from "../utils/function";
 
 export default {
+  data() {
+    return {
+      customer: "",
+      phone: "",
+      showingCustomerInfo: false,
+      confirming: false,
+    };
+  },
   computed: {
     ...mapState(useCartStore, {
       cartItems: "products",
@@ -59,7 +96,33 @@ export default {
   methods: {
     ...mapActions(useCartStore, {
       removeCart: "removeCart",
+      clearCart: "clearCart",
     }),
+    confirmNow() {
+      const orderData = {
+        customer: this.customer,
+        phone: this.phone,
+        cartItems: this.cartItems,
+      };
+      this.confirming = true;
+      privateService
+        .sellDrugs(orderData)
+        .then((res) => {
+          showSuccessMsg(res);
+          this.customer = "";
+          this.phone = "";
+          this.cartItems = false;
+          this.clearCart();
+          this.$router.push("/dashboard/selling-history");
+        })
+        .catch((err) => {
+          showErrorMsg(err);
+        })
+        .finally(() => {
+          this.confirming = false;
+        });
+      //console.log(orderData);
+    },
   },
   components: {
     TheButton,

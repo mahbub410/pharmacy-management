@@ -36,5 +36,18 @@ export default{
     searchDrug(searchString){
         return axiosPrivate.post("/private/drug/search",{searchString:searchString});
 
+    },
+
+    sellDrugs(payload){
+        return axiosPrivate.post("/private/sell/",payload);
+
+    },
+
+    getOrderHistory(){
+        return axiosPrivate.get("/private/sell");
+    },
+        
+    deleteOrderHistory(id){
+         return axiosPrivate.delete("/private/sell/"+id);
     }
 }
