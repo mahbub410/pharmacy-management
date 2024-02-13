@@ -6,10 +6,14 @@ import DashboardPage from '../views/Dashboard.vue';
 
 // variable er bitor nile project build howar somoy sob load hobe 
 const Overview = ()=> import('../views/dashboard/Overview.vue');
-const Drugs = ()=> import("../views/Dashboard/Drugs.vue");
-const SellingHistory = ()=> import("../views/Dashboard/SellingHistory.vue");
-const Settings = ()=> import("../views/Dashboard/Settings.vue");
-const Vendors = ()=> import("../views/Dashboard/Vendors.vue");
+const Drugs = ()=> import("../views/dashboard/Drugs.vue");
+const SellingHistory = ()=> import("../views/dashboard/SellingHistory.vue");
+const Settings = ()=> import("../views/dashboard/Settings.vue");
+const Vendors = ()=> import("../views/dashboard/Vendors.vue");
+const Account = ()=> import("../views/dashboard/setting/Account.vue");
+const Website = ()=> import("../views/dashboard/setting/Website.vue");
+const Theme = ()=> import("../views/dashboard/setting/Theme.vue");
+
 
 const routes = [
     {path: '/', component: LoginPage },
@@ -21,7 +25,15 @@ const routes = [
         {path: 'drug', component: Drugs},
         {path: 'vendor', component: Vendors},
         {path: 'selling-history', component: SellingHistory},
-        {path: 'settings', component: Settings}
+            {
+                path: 'settings', component: Settings,
+                redirect: "/dashboard/settings/account",
+                children: [
+                    { path: 'account', component: Account },
+                    { path: 'website', component: Website },
+                    { path: 'theme', component: Theme }
+                ]
+            }
     ]
     }
 ]

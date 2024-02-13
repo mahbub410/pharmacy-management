@@ -27,3 +27,12 @@ watch(
     },
     {deep: true}
 );
+
+watch(
+    () => pinia.state.value.theme,
+    (state) => {
+        localStorage.setItem("brandColor", state.brandColor);
+        //console.log(state.products)
+    },
+    {deep: true}
+);
